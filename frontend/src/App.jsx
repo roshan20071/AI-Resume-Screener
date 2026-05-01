@@ -16,7 +16,7 @@ const AIResumeScreener = () => {
     formData.append('jobDescription', jobDescription);
 
     try {
-      const response = await fetch('http://localhost:5000/api/screen', {
+      const response = await fetch('/api/screen', {
         method: 'POST',
         body: formData,
       });
