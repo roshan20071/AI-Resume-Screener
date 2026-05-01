@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
@@ -169,6 +170,15 @@ app.post('/api/screen', upload.array('resumes'), async (req, res) => {
     console.error('Error processing screening request:', error);
     res.status(500).json({ error: error.message || 'Internal server error during processing.' });
   }
+});
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// The "catch-all" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
 app.listen(port, () => {
