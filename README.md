@@ -1,4 +1,4 @@
-# 🚀 AI-Powered Resume Screener (Recruiter POV)
+#  AI-Powered Resume Screener (Recruiter POV)
 
 **A high-performance MERN-stack application that uses semantic search to rank candidates against job descriptions.**
 
@@ -6,16 +6,16 @@
 
 ---
 
-## 💡 The Problem
+##  The Problem
 Traditional Applicant Tracking Systems (ATS) rely on keyword matching, which often misses qualified candidates who use different terminology. This tool solves that by using **Natural Language Processing (NLP)** to understand the *meaning* and *context* of a candidate's experience.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 *   **Frontend:** React.js, Tailwind CSS (SaaS-inspired UI), Lucide Icons.
 *   **Backend:** Node.js, Express.js.
 *   **AI/ML:** OpenAI/Gemini Embeddings (`text-embedding-3-small` or `text-embedding-004`), GPT-4o-mini for reasoning.
 *   **Deployment:** Render (PaaS).
 
-## 🧠 How It Works (The "Brain")
+##  How It Works (The "Brain")
 The core of this project is built on **Vector Space Modeling**. Instead of searching for "React," the system maps the entire Resume and Job Description into a **high-dimensional vector space**.
 
 1.  **PDF Parsing:** Extracts raw text from uploaded resumes using `pdf-parse`.
@@ -24,13 +24,13 @@ The core of this project is built on **Vector Space Modeling**. Instead of searc
     $$\text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|}$$
 4.  **AI Reasoning:** A targeted prompt in **GPT-4o-mini** provides a 1-2 sentence explanation of the match logic for the recruiter.
 
-## 🌟 Key Features
-*   ✅ **Semantic Ranking:** Ranks by relevance, not just keywords.
-*   ✅ **Bulk Processing:** Handles multiple PDFs in a single screening session.
-*   ✅ **Recruiter Insights:** Provides "AI Reasoning" to justify the ranking.
-*   ✅ **Mobile Responsive:** Fully optimized for all devices using a dynamic API routing.
+##  Key Features
+*    **Semantic Ranking:** Ranks by relevance, not just keywords.
+*    **Bulk Processing:** Handles multiple PDFs in a single screening session.
+*    **Recruiter Insights:** Provides "AI Reasoning" to justify the ranking.
+*    **Mobile Responsive:** Fully optimized for all devices using a dynamic API routing.
 
-## 🚀 Installation & Setup
+##  Installation & Setup
 1.  **Clone the repo:**
     ```bash
     git clone [https://github.com/roshangatadi/ai-resume-screener.git](https://github.com/roshangatadi/ai-resume-screener.git)
