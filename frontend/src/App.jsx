@@ -1,40 +1,64 @@
 import React, { useState } from 'react';
-import { Upload, Search, FileText, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import {
+  Upload,
+  Search,
+  FileText,
+  CheckCircle,
+  AlertCircle,
+  Loader2,
+  BookOpen,
+  Briefcase
+} from 'lucide-react';
+
+const API_BASE = 'https://bug-free-giggle-97pp7xwr75j29w6-5000.app.github.dev';
 
 const AIResumeScreener = () => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [files, setFiles] = useState([]);
-  const [jobDescription, setJobDescription] = useState("");
+  const [jobDescription, setJobDescription] = useState('');
 
-  const handleScreening = async () => {
-    if (files.length === 0) return alert("Please upload at least one resume!");
-    
-    setLoading(true);
-    const formData = new FormData();
-    files.forEach(file => formData.append('resumes', file));
-    formData.append('jobDescription', jobDescription);
+ const handleScreening = async () => {
+  if (files.length === 0) {
+    alert('Please upload at least one resume!');
+    return;
+  }
 
-    try {
-      const response = await fetch('/api/screen', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      setResults(data.results || []); // This sets the real data from your backend
-    } catch (error) {
-      console.error("Error screening resumes:", error);
-      alert("Failed to connect to the backend brain: " + error.message);
-    } finally {
-      setLoading(false);
+  if (!jobDescription.trim()) {
+    alert('Please enter the job description!');
+    return;
+  }
+
+  setLoading(true);
+
+  const formData = new FormData();
+  files.forEach((file) => formData.append('resumes', file));
+  formData.append('jobDescription', jobDescription);
+
+  try {
+    const response = await fetch('/api/screen', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Request failed');
     }
-  };
+
+    setResults(data.results || []);
+  } catch (error) {
+    console.error('Error screening resumes:', error);
+    alert('Failed to connect to the backend brain: ' + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-50 p-8 font-sans text-slate-900">
       <div className="max-w-5xl mx-auto">
-        {/* Header Section */}
         <header className="mb-10 text-center">
           <h1 className="text-4xl font-extrabold text-indigo-700 tracking-tight mb-2">
             AI Resume Screener
@@ -45,14 +69,13 @@ const AIResumeScreener = () => {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Left Column: Input Fields */}
           <div className="md:col-span-1 space-y-6">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
               <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-3">
                 <FileText size={18} className="text-indigo-500" />
                 1. Job Description
               </label>
-              <textarea 
+              <textarea
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
                 placeholder="Paste the job requirements here..."
@@ -65,22 +88,26 @@ const AIResumeScreener = () => {
                 <Upload size={18} className="text-indigo-500" />
                 2. Upload Resumes
               </label>
+
               <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-indigo-400 transition-colors cursor-pointer bg-slate-50">
-                <input 
-                  type="file" 
-                  multiple 
-                  className="hidden" 
-                  id="fileUpload" 
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  id="fileUpload"
                   onChange={(e) => setFiles(Array.from(e.target.files))}
                 />
                 <label htmlFor="fileUpload" className="cursor-pointer">
                   <Upload className="mx-auto text-slate-400 mb-2" size={32} />
                   <p className="text-xs text-slate-500">
-                    {files.length > 0 ? `${files.length} file(s) selected` : "Drop PDFs here or click to browse"}
+                    {files.length > 0
+                      ? `${files.length} file(s) selected`
+                      : 'Drop PDFs here or click to browse'}
                   </p>
                 </label>
               </div>
-              <button 
+
+              <button
                 onClick={handleScreening}
                 disabled={loading}
                 className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
@@ -91,7 +118,6 @@ const AIResumeScreener = () => {
             </div>
           </div>
 
-          {/* Right Column: Results Section */}
           <div className="md:col-span-2 space-y-6">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 min-h-[500px]">
               <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
@@ -111,26 +137,111 @@ const AIResumeScreener = () => {
               ) : (
                 <div className="space-y-4">
                   {results.map((candidate, index) => (
-                    <div key={index} className="group p-5 rounded-xl border border-slate-100 bg-white hover:border-indigo-200 hover:shadow-md transition-all">
+                    <div
+                      key={`${candidate.name}-${index}`}
+                      className="group p-5 rounded-xl border border-slate-100 bg-white hover:border-indigo-200 hover:shadow-md transition-all"
+                    >
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <div className={`p-2 rounded-lg ${candidate.score > 80 ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'}`}>
-                            <CheckCircle size={20} />
+                          <div
+                            className={`p-2 rounded-lg ${
+                              candidate.status === 'error'
+                                ? 'bg-red-100 text-red-600'
+                                : candidate.score > 80
+                                ? 'bg-green-100 text-green-600'
+                                : 'bg-amber-100 text-amber-600'
+                            }`}
+                          >
+                            {candidate.status === 'error' ? (
+                              <AlertCircle size={20} />
+                            ) : (
+                              <CheckCircle size={20} />
+                            )}
                           </div>
                           <h3 className="font-bold text-slate-700">{candidate.name}</h3>
                         </div>
+
                         <div className="text-right">
-                          <span className={`text-2xl font-black ${candidate.score > 80 ? 'text-green-500' : 'text-amber-500'}`}>
+                          <span
+                            className={`text-2xl font-black ${
+                              candidate.status === 'error'
+                                ? 'text-red-500'
+                                : candidate.score > 80
+                                ? 'text-green-500'
+                                : 'text-amber-500'
+                            }`}
+                          >
                             {candidate.score}%
                           </span>
-                          <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Match Score</p>
+                          <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">
+                            Match Score
+                          </p>
                         </div>
                       </div>
-                      <div className="bg-slate-50 p-3 rounded-lg border-l-4 border-indigo-400">
+
+                      <div className="bg-slate-50 p-3 rounded-lg border-l-4 border-indigo-400 mb-4">
                         <p className="text-sm text-slate-600 italic">
-                          <span className="font-bold text-indigo-700 not-italic">AI Reasoning: </span>
+                          <span className="font-bold text-indigo-700 not-italic">
+                            AI Reasoning:{' '}
+                          </span>
                           "{candidate.reasoning}"
                         </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                          <h4 className="flex items-center gap-2 font-semibold text-blue-800 mb-3">
+                            <BookOpen size={18} />
+                            Skills to Learn
+                          </h4>
+
+                          {candidate.learningPath?.length > 0 ? (
+                            <div className="space-y-3">
+                              {candidate.learningPath.map((item, idx) => (
+                                <div
+                                  key={`${candidate.name}-skill-${idx}`}
+                                  className="bg-white p-3 rounded-lg border border-blue-100"
+                                >
+                                  <p className="font-semibold text-slate-800">{item.skill}</p>
+                                  <p className="text-sm text-slate-600 mt-1">{item.why}</p>
+                                  <p className="text-xs text-slate-500 mt-2">
+                                    <span className="font-semibold">How to learn:</span>{' '}
+                                    {item.how_to_learn}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-slate-500">
+                              No learning suggestions available.
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                          <h4 className="flex items-center gap-2 font-semibold text-emerald-800 mb-3">
+                            <Briefcase size={18} />
+                            Best Fit Roles
+                          </h4>
+
+                          {candidate.roleFit?.length > 0 ? (
+                            <div className="space-y-3">
+                              {candidate.roleFit.map((item, idx) => (
+                                <div
+                                  key={`${candidate.name}-role-${idx}`}
+                                  className="bg-white p-3 rounded-lg border border-emerald-100"
+                                >
+                                  <p className="font-semibold text-slate-800">{item.role}</p>
+                                  <p className="text-sm text-slate-600 mt-1">{item.why}</p>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-slate-500">
+                              No role recommendations available.
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
