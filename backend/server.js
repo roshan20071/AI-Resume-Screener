@@ -99,10 +99,14 @@ app.post('/api/screen', upload.array('resumes'), async (req, res) => {
         resumeTexts.push(textContent);
       } catch (err) {
         console.error(`Error parsing PDF ${file.originalname}:`, err);
+        let errorMsg = err.message;
+        if (errorMsg.includes('429') || errorMsg.includes('Too Many Requests')) {
+          errorMsg = 'Gemini API Rate Limit Exceeded. Please wait a minute and try again.';
+        }
         candidates.push({
           name: file.originalname.replace('.pdf', ''),
           score: 0,
-          reasoning: 'Failed to extract text from PDF.',
+          reasoning: `Extraction Error: ${errorMsg}`,
           status: 'error'
         });
       }
@@ -145,10 +149,14 @@ app.post('/api/screen', upload.array('resumes'), async (req, res) => {
           });
         } catch (err) {
           console.error(`Error processing candidate ${file.originalname}:`, err);
+          let errorMsg = err.message;
+          if (errorMsg.includes('429') || errorMsg.includes('Too Many Requests')) {
+            errorMsg = 'Gemini API Rate Limit Exceeded. Please wait a minute and try again.';
+          }
           candidates.push({
             name: file.originalname.replace('.pdf', ''),
             score: 0,
-            reasoning: 'Failed to generate reasoning due to API error.',
+            reasoning: `API Error: ${errorMsg}`,
             status: 'error'
           });
         }

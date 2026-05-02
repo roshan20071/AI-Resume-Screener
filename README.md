@@ -62,3 +62,15 @@ The core of this project is built on **Vector Space Modeling**. Instead of searc
 *   Specializing in MERN stack and Agentic AI systems.
 
 ---
+
+---
+
+## 👥 Contributors
+This project was a collaborative effort between:
+
+*   **Roshan Gatadi** (Woxsen University)  
+    [GitHub](https://github.com/roshan20071) | [LinkedIn](https://www.linkedin.com/in/roshangatadi/)
+*   **Mittapalli Sreepriya** (Vasavi College of Engineering)  
+    [GitHub](https://github.com/Sree1517) | [LinkedIn](https://www.linkedin.com/in/mittapalli-sreepriya/)
+
+---
