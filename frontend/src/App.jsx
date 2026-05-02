@@ -10,7 +10,7 @@ import {
   Briefcase
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://bug-free-giggle-97pp7xwr75j29w6-5000.app.github.dev';
 
 const AIResumeScreener = () => {
   const [loading, setLoading] = useState(false);
@@ -18,55 +18,43 @@ const AIResumeScreener = () => {
   const [files, setFiles] = useState([]);
   const [jobDescription, setJobDescription] = useState('');
 
-  const handleScreening = async () => {
-    if (files.length === 0) {
-      alert('Please upload at least one resume!');
-      return;
+ const handleScreening = async () => {
+  if (files.length === 0) {
+    alert('Please upload at least one resume!');
+    return;
+  }
+
+  if (!jobDescription.trim()) {
+    alert('Please enter the job description!');
+    return;
+  }
+
+  setLoading(true);
+
+  const formData = new FormData();
+  files.forEach((file) => formData.append('resumes', file));
+  formData.append('jobDescription', jobDescription);
+
+  try {
+    const response = await fetch('/api/screen', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Request failed');
     }
 
-    if (!jobDescription.trim()) {
-      alert('Please enter the job description!');
-      return;
-    }
-
-    setLoading(true);
-
-    const formData = new FormData();
-    files.forEach((file) => formData.append('resumes', file));
-    formData.append('jobDescription', jobDescription);
-
-    try {
-      const response = await fetch(`${API_BASE}/api/screen`, {
-        method: 'POST',
-        body: formData
-      });
-
-      const rawText = await response.text();
-      console.log('Raw server response:', rawText);
-
-      if (!rawText || !rawText.trim()) {
-        throw new Error('Server returned an empty response.');
-      }
-
-      let data;
-      try {
-        data = JSON.parse(rawText);
-      } catch {
-        throw new Error(`Server did not return valid JSON. Response was: ${rawText}`);
-      }
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Request failed.');
-      }
-
-      setResults(data.results || []);
-    } catch (error) {
-      console.error('Error screening resumes:', error);
-      alert('Failed to connect to the backend brain: ' + error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setResults(data.results || []);
+  } catch (error) {
+    console.error('Error screening resumes:', error);
+    alert('Failed to connect to the backend brain: ' + error.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-slate-50 p-8 font-sans text-slate-900">

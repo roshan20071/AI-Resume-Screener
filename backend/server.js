@@ -35,7 +35,7 @@ if (!process.env.GEMINI_API_KEY) {
   console.error('❌ GEMINI_API_KEY missing in .env');
 }
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI('AIzaSyBjcPfk2TrENGabFMNviJoHQpE7wgal_Ag');
 const embedModel = genAI.getGenerativeModel({ model: 'gemini-embedding-2' });
 const chatModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
